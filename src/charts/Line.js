@@ -28,6 +28,8 @@ class Line {
 
     this.noNegatives = this.w.globals.minX === Number.MAX_VALUE
 
+    this.isAreaRange = this.w.config.plotOptions.area.isRange
+
     this.yaxisIndex = 0
   }
 
@@ -60,6 +62,7 @@ class Line {
     let prevSeriesY = []
 
     let categoryAxisCorrection = 0
+
 
     for (let i = 0; i < series.length; i++) {
       // width divided into equal parts
@@ -178,6 +181,12 @@ class Line {
         } else {
           x = x + xDivision
         }
+
+
+        const highlow = this.getRangeValue(realIndex, j)
+
+        let y1 = Math.min(highlow.low, highlow.high)
+        let y2 = Math.max(highlow.low, highlow.high)
 
         const minY = Utils.isNumber(w.globals.minYArr[realIndex]) ? w.globals.minYArr[realIndex] : w.globals.minY
 
@@ -524,6 +533,14 @@ class Line {
     return {
       pathFromLine,
       pathFromArea
+    }
+  }
+
+  getRangeValue (i, j) {
+    const w = this.w
+    return {
+      low: w.globals.seriesLow[i][j],
+      high: w.globals.seriesHigh[i][j]
     }
   }
 

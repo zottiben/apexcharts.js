@@ -323,6 +323,8 @@ export default class Core {
   resetGlobals () {
     let gl = this.w.globals
     gl.series = []
+    gl.seriesHigh = []
+    gl.seriesLow = []
     gl.seriesCandleO = []
     gl.seriesCandleH = []
     gl.seriesCandleL = []
@@ -531,6 +533,22 @@ export default class Core {
     return ohlc
   }
 
+  handleRangeData(ser, i) {
+    const gl = this.w.globals
+
+    let highLow = {}
+    if (this.isFormat2DArray()) {
+      highLow = this.handleRangeDataFormat('array', ser, i)
+    } else if (this.isFormatXY()) {
+      highLow = this.handleRangeDataFormat('xy', ser, i)
+    }
+
+    gl.seriesLow.push(highLow.low)
+    gl.seriesHigh.push(highLow.high)
+
+    return highLow
+  }
+
   handleCandleStickDataFormat (format, ser, i) {
     const serO = []
     const serH = []
@@ -566,6 +584,35 @@ export default class Core {
     }
   }
 
+  handleRangeDataFormat (format, ser, i) {
+    const serHigh = []
+    const serLow = []
+
+    const err = 'Please provide [Low, High] values in valid format. Read more https://apexcharts.com/docs/series/#arearange'
+
+    if (format === 'array') {
+      if (ser[i].data[0][1].length !== 2) {
+        throw new Error(err)
+      }
+      for (let j = 0; j < ser[i].data.length; j++) {
+        serLow.push(ser[i].data[j][1][0])
+        serHigh.push(ser[i].data[j][1][1])
+      }
+    } else if (format === 'xy') {
+      if (ser[i].data[0].y.length !== 2) {
+        throw new Error(err)
+      }
+      for (let j = 0; j < ser[i].data.length; j++) {
+        serLow.push(ser[i].data[j].y[0])
+        serHigh.push(ser[i].data[j].y[1])
+      }
+    }
+
+    return {
+      low: serLow, high: serHigh
+    }
+  }
+
   parseDataAxisCharts (ser, series, ctx = this.ctx) {
     const cnf = this.w.config
     const gl = this.w.globals
@@ -591,6 +638,10 @@ export default class Core {
 
         if (cnf.chart.type === 'candlestick' || ser[i].type === 'candlestick') {
           this.handleCandleStickData(ser, i)
+        }
+
+        if (cnf.chart.type === 'area' && cnf.plotOptions.area.isRange) {
+          this.handleRangeData(ser, i)
         }
 
         gl.series.push(this.twoDSeries)

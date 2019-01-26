@@ -123,6 +123,8 @@ export default class Globals {
       // some way to get x value depending on mouse pointer
       seriesYvalues: [], // we will need this when deciding which series
       // user hovered on
+      seriesLow: [], // range charts
+      seriesHigh: [], // range charts
       seriesCandleO: [], // candle stick open values
       seriesCandleH: [], // candle stick high values
       seriesCandleL: [], // candle stick low values

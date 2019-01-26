@@ -291,6 +291,9 @@ export default class Options {
         }
       },
       plotOptions: {
+        area: {
+          isRange: false
+        },
         bar: {
           horizontal: false,
           endingShape: 'flat',
