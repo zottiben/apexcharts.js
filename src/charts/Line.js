@@ -209,8 +209,11 @@ class Line {
         } else {
           if (typeof series[i][j + 1] === 'undefined' || series[i][j + 1] === null) {
             y = zeroY - minY / yRatio[this.yaxisIndex]
+            y1 = y2 = y
           } else {
             y = (zeroY - series[i][j + 1] / yRatio[this.yaxisIndex])
+            y2 = (zeroY - w.globals.seriesHigh[i][j + 1] / yRatio[this.yaxisIndex])
+            y1 = (zeroY - w.globals.seriesLow[i][w.globals.seriesLow.length - 1 - j] / yRatio[this.yaxisIndex])
           }
         }
 
@@ -226,6 +229,7 @@ class Line {
           j,
           x,
           y,
+          y1, y2,
           xDivision,
           pX,
           pY,
@@ -372,7 +376,7 @@ class Line {
 
   createPaths ({
     series,
-    i, j, x, y, pX, pY,
+    i, j, x, y, y1, y2, pX, pY,
     xDivision,
     areaBottomY,
     linePath,
@@ -444,10 +448,10 @@ class Line {
       }
 
       if (j === series[i].length - 2) {
-        // last loop, close path
-        areaPath = areaPath + graphics.line(x, areaBottomY) + graphics.move(x, y) + 'z'
-        linePaths.push(linePath)
-        areaPaths.push(areaPath)
+           // last loop, close path
+          areaPath = areaPath + graphics.line(x, areaBottomY) + graphics.move(x, y) + 'z'
+          linePaths.push(linePath)
+          areaPaths.push(areaPath)       
       }
     }
 
