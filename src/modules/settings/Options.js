@@ -349,6 +349,7 @@ export default class Options {
               columnDelimiter: ',',
               headerCategory: 'category',
               headerValue: 'value',
+              exportSelection: true, // Fix for Issue #2333
               dateFormatter(timestamp) {
                 return new Date(timestamp).toDateString()
               }
@@ -530,7 +531,7 @@ export default class Options {
               formatter(w) {
                 return (
                   w.globals.seriesTotals.reduce((a, b) => a + b, 0) /
-                    w.globals.series.length +
+                  w.globals.series.length +
                   '%'
                 )
               }
